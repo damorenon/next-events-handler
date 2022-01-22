@@ -2,8 +2,9 @@ import { getEventById, getFeaturedEvents } from "../../helper/api-util";
 import EventSummary from "../../components/event-detail/event-summary";
 import EventLogistics from "../../components/event-detail/event-logistics";
 import EventContact from "../../components/event-detail/event-content";
-import ErrorAlert from "../../components/ui/error-alert";
+import Comments from "../../components/input/comments";
 import Button from "../../components/ui/button";
+import Head from "next/head";
 
 function EventDetailPage({ selectedEvent }) {
     const event = selectedEvent;
@@ -21,10 +22,14 @@ function EventDetailPage({ selectedEvent }) {
         );
     }
 
-    const { description, title, date, location, image } = event;
+    const { id, description, title, date, location, image } = event;
 
     return (
         <>
+            <Head>
+                <title>{title}</title>
+                <meta name="description" content={description} />
+            </Head>
             <EventSummary title={title} />
             <EventLogistics
                 date={date}
@@ -35,6 +40,7 @@ function EventDetailPage({ selectedEvent }) {
             <EventContact>
                 <p>{description}</p>
             </EventContact>
+            <Comments eventId={id} />
         </>
     );
 }
