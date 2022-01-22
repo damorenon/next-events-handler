@@ -1,7 +1,12 @@
 // /api/comments/some-id
+import { MongoClient } from "mongodb";
 
-function handler(req, res) {
+async function handler(req, res) {
     const eventId = req.query.eventId;
+
+    const client = await MongoClient.connect(
+        "mongodb+srv://damorenon:nqttbduy@cluster0.zmbzy.mongodb.net/events?retryWrites=true&w=majority"
+    );
 
     if (req.method === "POST") {
         const { email, name, text } = req.body;
@@ -17,8 +22,12 @@ function handler(req, res) {
             return;
         }
 
-        const newComment = { id: new Date().toISOString(), email, name, text };
-        console.log(newComment);
+        const newComment = { eventId, email, name, text };
+
+        const db = client.db();
+        const result = await db.collection("comments").insertOne(newComment);
+
+        console.log(result);
 
         res.status(201).json({
             message: "Added comments.",
@@ -33,6 +42,8 @@ function handler(req, res) {
         ];
         res.status(201).json({ comments: dummyList });
     }
+
+    client.close();
 }
 
 export default handler;
